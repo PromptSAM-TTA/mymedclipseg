@@ -1,0 +1,35 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.ipynb_checkpoints/
+
+# ===== 训练输出 / 历史 / 日志 =====
+logs/
+*_lr2e4/
+runs/
+unet_inredd/log_*.txt
+
+# ===== 模型权重 & checkpoint（大文件，不提交）=====
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# ===== 原始数据（67MB；如要提交数据，删掉这一行）=====
+data/
+
+# ===== 缓存 =====
+.cache/
+
+# ===== OS / IDE / 密钥 =====
+.DS_Store
+.vscode/
+.idea/
+*.swp
+.env
+*.key
+id_rsa*
