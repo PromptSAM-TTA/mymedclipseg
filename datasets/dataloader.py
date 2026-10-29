@@ -25,6 +25,42 @@ import cv2
 # Normalization used by CLIP models
 CLIP_NORMALIZE = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                       std=[0.229, 0.224, 0.225])
+
+# FDI (11..48) -> anatomical tooth name, used to build descriptive text prompts.
+FDI_TO_NAME = {
+    11: "maxillary right central incisor",
+    12: "maxillary right lateral incisor",
+    13: "maxillary right canine",
+    14: "maxillary right first premolar",
+    15: "maxillary right second premolar",
+    16: "maxillary right first molar",
+    17: "maxillary right second molar",
+    18: "maxillary right third molar",
+    21: "maxillary left central incisor",
+    22: "maxillary left lateral incisor",
+    23: "maxillary left canine",
+    24: "maxillary left first premolar",
+    25: "maxillary left second premolar",
+    26: "maxillary left first molar",
+    27: "maxillary left second molar",
+    28: "maxillary left third molar",
+    31: "mandibular left central incisor",
+    32: "mandibular left lateral incisor",
+    33: "mandibular left canine",
+    34: "mandibular left first premolar",
+    35: "mandibular left second premolar",
+    36: "mandibular left first molar",
+    37: "mandibular left second molar",
+    38: "mandibular left third molar",
+    41: "mandibular right central incisor",
+    42: "mandibular right lateral incisor",
+    43: "mandibular right canine",
+    44: "mandibular right first premolar",
+    45: "mandibular right second premolar",
+    46: "mandibular right first molar",
+    47: "mandibular right second molar",
+    48: "mandibular right third molar",
+}
                                       
 def to_long_tensor(pic):
     if isinstance(pic, Image.Image):
@@ -223,7 +259,10 @@ class DatasetSegmentation(Dataset):
             # Binarize: keep only this tooth, background everywhere else.
             mask = (mask == class_id).astype(np.uint8)
             fdi = self.cls_to_fdi.get(class_id, class_id)
-            text = f"tooth {fdi}"
+            if fdi in FDI_TO_NAME:
+                text = f"a panoramic x-ray of {FDI_TO_NAME[fdi]}, tooth {fdi}"
+            else:
+                text = f"tooth {fdi}"
             stem = os.path.splitext(mask_filename)[0]
             mask_filename = f"{stem}_tooth{fdi}.png"
 

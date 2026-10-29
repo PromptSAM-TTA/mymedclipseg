@@ -1,0 +1,33 @@
+DATASET:
+  NAME: "INREDD10"
+  TRAIN_PATH: "./data/INREDD/Train_Folder/"
+  VAL_PATH: "./data/INREDD/Val_Folder/"
+  TEST_PATH: "./data/INREDD/Test_Folder/"
+  TEXT_PROMPT_PATH: "./data/INREDD/Prompts_Folder_10/"
+  SIZE: 224
+  # Split the 0..32 multi-class mask into per-tooth binary masks + "tooth <FDI>" prompts.
+  MULTI_CLASS_TO_BINARY: True
+  CLS_TO_FDI_JSON: "./data/INREDD/cls_to_fdi.json"
+
+TRAIN:
+  BATCH_SIZE: 16
+  NUM_EPOCHS: 100
+  LEARNING_RATE: 0.0002
+  DICE_WEIGHT: 0.5
+  CE_WEIGHT: 0.5
+  CLIP_WEIGHT: 0.1
+
+TEST:
+  NUM_SAMPLES: 30
+  USE_LATEST: False
+
+MODEL:
+  CLIP_MODEL: unimedclip
+  BACKBONE: "ViT-B/16"
+  ADAPTER_DIM: 256
+  NUM_UPSCALE: 2
+  BETA: 2.35
+  GATE_INIT: 0.0
+  LAYERS: [1,2,3,4,5,6,7,8,9,10]
+  TEMPERATURE: 0.2
+  DEVICE: "cuda"

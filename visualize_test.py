@@ -116,7 +116,7 @@ def main():
             for i in range(len(batch["image_name"])):
                 gt = (gts[i] > 0)
                 samples.append({
-                    "fdi": batch["text_prompt"][i].replace("tooth", "").strip(),
+                    "fdi": batch["text_prompt"][i].rsplit("tooth ", 1)[-1].strip(),
                     "image": batch["image"][i],
                     "gt": gt,
                     "pred": preds[i].astype(bool),
