@@ -61,6 +61,15 @@ FDI_TO_NAME = {
     47: "mandibular right second molar",
     48: "mandibular right third molar",
 }
+
+# FDI tens digit (1..4) -> region in the X-ray image. Left/right is mirrored vs
+# anatomy (panoramic radiograph convention): maxillary right -> image left, etc.
+FDI_TO_REGION = {
+    1: "upper-left region",    # FDI 11-18 (maxillary right  -> image left)
+    2: "upper-right region",   # FDI 21-28 (maxillary left   -> image right)
+    3: "lower-right region",   # FDI 31-38 (mandibular left  -> image right)
+    4: "lower-left region",    # FDI 41-48 (mandibular right -> image left)
+}
                                       
 def to_long_tensor(pic):
     if isinstance(pic, Image.Image):
@@ -260,7 +269,8 @@ class DatasetSegmentation(Dataset):
             mask = (mask == class_id).astype(np.uint8)
             fdi = self.cls_to_fdi.get(class_id, class_id)
             if fdi in FDI_TO_NAME:
-                text = f"a panoramic x-ray of {FDI_TO_NAME[fdi]}, tooth {fdi}"
+                region = FDI_TO_REGION[fdi // 10]
+                text = f"tooth {fdi}, located in the image's {region}"
             else:
                 text = f"tooth {fdi}"
             stem = os.path.splitext(mask_filename)[0]
