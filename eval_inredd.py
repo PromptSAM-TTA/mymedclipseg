@@ -155,7 +155,7 @@ def main():
 
             for i in range(len(batch["image_name"])):
                 img = batch["image_name"][i]
-                fdi = batch["text_prompt"][i].split(",")[0].split()[-1].strip()
+                fdi = str(batch["fdi"][i].item())
                 by_image.setdefault(img, []).append({
                     "fdi": fdi, "pred": preds[i].astype(bool), "gt": (gts[i] > 0),
                 })

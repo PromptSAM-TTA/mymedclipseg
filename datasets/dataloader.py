@@ -264,15 +264,12 @@ class DatasetSegmentation(Dataset):
         mask = cv2.imread(os.path.join(self.output_path, mask_filename), 0)
         mask = cv2.resize(mask, (self.image_size, self.image_size), interpolation=cv2.INTER_NEAREST)
 
+        fdi = -1
         if self.multi_class_to_binary:
             # Binarize: keep only this tooth, background everywhere else.
             mask = (mask == class_id).astype(np.uint8)
             fdi = self.cls_to_fdi.get(class_id, class_id)
-            if fdi in FDI_TO_NAME:
-                region = FDI_TO_REGION[fdi // 10]
-                text = f"tooth {fdi}, located in the image's {region}"
-            else:
-                text = f"tooth {fdi}"
+            text = f"a {FDI_TO_NAME[fdi]}" if fdi in FDI_TO_NAME else f"tooth {fdi}"
             stem = os.path.splitext(mask_filename)[0]
             mask_filename = f"{stem}_tooth{fdi}.png"
 
@@ -288,6 +285,7 @@ class DatasetSegmentation(Dataset):
             "image_name": image_filename,
             "mask_name": mask_filename,
             "text_prompt": text,
+            "fdi": fdi,
             "dataset_name": self.task_name
         }
 

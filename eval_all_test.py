@@ -153,7 +153,7 @@ def evaluate_one(dataset_name, config_file, output_dir, seed=1):
                 pred = preds[i].astype(bool)
                 d = dice(pred, gt)
                 s = {
-                    "fdi": batch["text_prompt"][i].split(",")[0].split()[-1].strip(),
+                    "fdi": str(batch["fdi"][i].item()),
                     "img_name": batch["image_name"][i],
                     "image": batch["image"][i],
                     "pred": pred,
