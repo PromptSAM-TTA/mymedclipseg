@@ -269,7 +269,7 @@ class DatasetSegmentation(Dataset):
             # Binarize: keep only this tooth, background everywhere else.
             mask = (mask == class_id).astype(np.uint8)
             fdi = self.cls_to_fdi.get(class_id, class_id)
-            text = f"FDI tooth {fdi}: {FDI_TO_NAME[fdi]}" if fdi in FDI_TO_NAME else f"tooth {fdi}"
+            text = f"tooth {fdi}"
             stem = os.path.splitext(mask_filename)[0]
             mask_filename = f"{stem}_tooth{fdi}.png"
 

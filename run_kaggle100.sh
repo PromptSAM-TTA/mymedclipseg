@@ -5,6 +5,7 @@ set -euo pipefail
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 export HF_HUB_DISABLE_TELEMETRY=1
+export PYTHONUNBUFFERED=1
 
 source /opt/miniconda3/etc/profile.d/conda.sh
 conda activate medclipseg

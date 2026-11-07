@@ -133,11 +133,28 @@ class CustomCLIP(nn.Module):
         x_img = self.vision_model.conv1(image)
         x_img = x_img.reshape(x_img.shape[0], x_img.shape[1], -1)  # shape = [*, width, grid ** 2]
         x_img = x_img.permute(0, 2, 1)  # shape = [*, grid ** 2, width]
+
+        # Interpolate the positional embedding to the current patch grid so the
+        # model accepts input sizes other than the pretrained 224x224 (e.g. 336).
+        H_img, W_img = image.shape[2], image.shape[3]
+        gh, gw = H_img // self.patch_size, W_img // self.patch_size
+        pos_embed = self.vision_model.positional_embedding  # [1+196, C] (or [1, 1+196, C])
+        if pos_embed.dim() == 3:
+            pos_embed = pos_embed[0]
+        if pos_embed.shape[0] != 1 + gh * gw:
+            cls_embed = pos_embed[:1, :]              # [1, C]
+            patch_embed = pos_embed[1:, :]            # [196, C]
+            src = int(patch_embed.shape[0] ** 0.5)
+            patch_embed = patch_embed.reshape(src, src, -1).permute(2, 0, 1).unsqueeze(0)  # [1, C, src, src]
+            patch_embed = F.interpolate(patch_embed, size=(gh, gw), mode="bilinear", align_corners=False)
+            patch_embed = patch_embed.squeeze(0).permute(1, 2, 0).reshape(gh * gw, -1)  # [gh*gw, C]
+            pos_embed = torch.cat([cls_embed, patch_embed], dim=0)  # [1+gh*gw, C]
+
         x_img = torch.cat(
             [self.vision_model.class_embedding.to(x_img.dtype) + torch.zeros(x_img.shape[0], 1, x_img.shape[-1], dtype=x_img.dtype, device=x_img.device),
              x_img], dim=1)  # shape = [*, grid ** 2 + 1, width]
 
-        x_img = x_img + self.vision_model.positional_embedding.to(x_img.dtype)
+        x_img = x_img + pos_embed.to(x_img.dtype)
         x_img = self.vision_model.ln_pre(x_img)
         x_img = x_img.permute(1, 0, 2)  # NLD -> LND
 
