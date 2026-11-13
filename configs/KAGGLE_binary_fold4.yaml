@@ -1,0 +1,31 @@
+DATASET:
+  NAME: "KAGGLE_binary_fold4"
+  TRAIN_PATH: "./data/KAGGLE_binary_pool/"
+  VAL_PATH: "./data/KAGGLE_binary_pool/"
+  TEST_PATH: "./data/KAGGLE_binary_pool/"
+  TEXT_PROMPT_PATH: "./data/KAGGLE_binary_folds/fold4/Prompts_Folder/"
+  SIZE: 336
+  MULTI_CLASS_TO_BINARY: False
+
+TRAIN:
+  BATCH_SIZE: 4
+  NUM_EPOCHS: 100
+  LEARNING_RATE: 0.0002
+  DICE_WEIGHT: 0.5
+  CE_WEIGHT: 0.5
+  CLIP_WEIGHT: 0.1
+
+TEST:
+  NUM_SAMPLES: 30
+  USE_LATEST: False
+
+MODEL:
+  CLIP_MODEL: unimedclip
+  BACKBONE: "ViT-B/16"
+  ADAPTER_DIM: 256
+  NUM_UPSCALE: 2
+  BETA: 2.35
+  GATE_INIT: 0.0
+  LAYERS: [1,2,3,4,5,6,7,8,9,10]
+  TEMPERATURE: 0.2
+  DEVICE: "cuda"
